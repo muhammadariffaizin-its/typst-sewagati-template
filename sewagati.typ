@@ -13,6 +13,7 @@
 // daftar pustaka Vancouver berurutan sesuai kutipan.
 
 #let sewagati-font = "Times New Roman"
+#let secondary-color = rgb("#0000FF")
 
 // Nomor afiliasi penulis dalam bentuk superskrip, dengan tanda * bila koresponden.
 #let author-mark(a) = {
@@ -66,18 +67,23 @@
     },
   )
 
-  set text(font: sewagati-font, size: 12pt, lang: "id")
+  set text(font: sewagati-font, size: 10pt, lang: "id")
   set par(justify: true, leading: 0.65em)
   set block(spacing: 0.9em)
 
   // Judul bab (level 1) kapital, sub-bab (level 2) tebal
-  set heading(numbering: none)
+  show heading.where(level: 1): set heading(numbering: "1")
   show heading.where(level: 1): it => block(above: 1.2em, below: 0.8em, sticky: true)[
-    #set text(weight: "bold")
+    #set text(size: 12pt, weight: "bold", fill: secondary-color)
+    #let num = counter(heading).display(it.numbering)
+    #box(width: 1cm)[#num]
     #upper(it.body)
   ]
+  show heading.where(level: 2): set heading(numbering: "1.1")
   show heading.where(level: 2): it => block(above: 1em, below: 0.6em, sticky: true)[
-    #set text(weight: "bold")
+    #set text(size: 12pt, weight: "bold", fill: secondary-color)
+    #let num = counter(heading).display(it.numbering)
+    #box(width: 1cm)[#num]
     #it.body
   ]
 
@@ -105,39 +111,46 @@
 
   // Banner jurnal
   block(below: 1.2em)[
-    #set text(size: 9pt)
-    SEWAGATI, Jurnal Pengabdian Kepada Masyarakat, #volume, #year (e-ISSN: 2613-9960)
-    #if doi != none [#linebreak() DOI: #doi]
-    #if dates != none [
-      #linebreak()
-      Naskah Masuk #date-of(dates, "submitted"); Naskah Diulas #date-of(dates, "reviewed");
-      Naskah Diterima #date-of(dates, "accepted"); Naskah Dipublikasikan Online #date-of(dates, "published")
+    #set text(size: 7pt)
+    #text(fill: secondary-color)[SEWAGATI, Jurnal Pengabdian Kepada Masyarakat, #volume, #year (e-ISSN: 2613-9960)]
+    #line(length: 100%, stroke: 0.5pt)
+    #block(above: 2em)[
+      #if doi != none [DOI: #doi] #h(1fr)
+      #if dates != none [
+        Naskah Masuk #date-of(dates, "submitted"); #h(1fr)
+        Naskah Diulas #date-of(dates, "reviewed"); #h(1fr)
+        Naskah Diterima #date-of(dates, "accepted"); #h(1fr)
+        Naskah Dipublikasikan Online #date-of(dates, "published") #h(2fr)
+    ]
     ]
   ]
 
   // Judul, penulis, afiliasi
-  align(center)[
+  align(left)[
     #text(size: 18pt, weight: "bold")[#title]
     #if title-en != none [
       #linebreak()
-      #text(style: "italic")[#title-en]
+      #text(size: 14pt, style: "italic")[#title-en]
     ]
     #v(1em)
-    #authors.map(a => [#a.name#author-mark(a)]).join(", ")
+    #text(size: 12pt)[#authors.map(a => [#a.name#author-mark(a)]).join(" | ")]
     #v(0.4em)
-    #affiliations.enumerate(start: 1).map(((i, t)) => [#super[#i] #t]).join(", ")
+    #text(size: 8pt)[#affiliations.enumerate(start: 1).map(((i, t)) => [#super[#i] #t]).join(", ")]
     #if corresponding != none [
       #v(0.6em)
-      #set text(size: 10pt)
-      \* Korespondensi: #corresponding.name, #corresponding.affiliation. Alamat e-mail: #corresponding.email
+      #set text(size: 8pt)
+      *Korespondensi*
+      
+      \* #corresponding.name, #corresponding.affiliation. Alamat e-mail: #corresponding.email
     ]
   ]
 
   // Abstrak dan kata kunci, Indonesia lalu Inggris
   let abstract-part(heading-text, abstract, kw, kw-label) = [
     #v(1em)
-    #text(weight: "bold")[#heading-text]
+    #text(size: 10pt, weight: "bold")[#heading-text]
     #v(0.2em)
+    #set text(size: 9pt)
     #abstract
     #if kw != none [
       #v(0.4em)
@@ -146,7 +159,7 @@
   ]
 
   if abstract-id != none { abstract-part("ABSTRAK", abstract-id, keywords-id, "Kata Kunci:") }
-  if abstract-en != none { abstract-part("ABSTRACT", abstract-en, keywords-en, "Keywords:") }
+  if abstract-en != none { text(style: "italic")[ #abstract-part("ABSTRACT", abstract-en, keywords-en, "Keywords:") ] }
 
   v(1em)
   line(length: 100%, stroke: 0.5pt)
