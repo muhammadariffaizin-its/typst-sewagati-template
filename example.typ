@@ -81,9 +81,9 @@ Berikut adalah contoh penulisan gambar, Tabel, singkatan atau akronim, satuan, d
     kind: table,
     table(
       columns: (auto, auto, auto),
-      align: (left, center, center),
+      align: (center, center, center),
       table.hline(),
-      table.header([*Dimensi*], [*Ukuran Nilai*], [*Angka*]),
+      table.header(table.cell(rowspan: 2, align: center + horizon)[*Dimensi*], table.cell(colspan: 2)[*Ukuran*], [*Nilai*], [*Angka*]),
       table.hline(),
       [Sudut dimensi], [8°], [-],
       [Kedalaman], [50 m], [-],

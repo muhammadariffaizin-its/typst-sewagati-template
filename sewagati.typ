@@ -63,6 +63,7 @@
         set text(size: 10pt)
         let label = [#n #h(0.5em) (#short-author), DKK.]
         if calc.odd(n) { align(right, label) } else { label }
+        line(length: 100%, stroke: 0.5pt)
       }
     },
   )
